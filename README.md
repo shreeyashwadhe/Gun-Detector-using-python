@@ -1,55 +1,33 @@
-import numpy as np
-import cv2
-import imutils
-import datetime
+🔫 Gun Detection Using OpenCV
+This is a simple Python project that detects the presence of a gun in front of a webcam using a pre-trained Haar Cascade classifier.
 
-# Load Haar Cascade XML file
-gun_cascade = cv2.CascadeClassifier('cascade.xml')
-if gun_cascade.empty():
-    print("Error loading cascade.xml")
-    exit()
+📷 How It Works
+Uses OpenCV to access your webcam and process video frames in real-time.
+Loads a Haar Cascade XML file (cascade.xml) trained to detect guns.
+Detects and highlights any gun-like objects in the video feed.
+Prints a message to the console if a gun is detected.
 
-# Start webcam
-camera = cv2.VideoCapture(0)
+🛠️ Requirements
+* Python 3.x
+* OpenCV
+* NumPy
+* imutils
 
-firstFrame = None
-gun_exist = False
+Install dependencies using pip:
 
-while True:
-    ret, frame = camera.read()
-    if not ret:
-        break
+pip install opencv-python numpy imutils
+▶️ How to Run
+1)Make sure you have the cascade.xml file in the same directory.
 
-    frame = imutils.resize(frame, width=500)
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+2)Run the script:
+python gun_detection.py
+3)A webcam window will open showing the video feed.
+4)Press q to quit the feed.
 
-    # Detect gun in the frame
-    guns = gun_cascade.detectMultiScale(gray, 1.3, 5, minSize=(100, 100))
+5)The terminal will display whether a gun was detected.
 
-    if len(guns) > 0:
-        gun_exist = True
+📁 Files
+$ gun_detection.py – Main Python script.
 
-    for (x, y, w, h) in guns:
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-        roi_gray = gray[y:y + h, x:x + w]
-        roi_color = frame[y:y + h, x:x + w]
+$ cascade.xml – Haar Cascade file used for gun detection.
 
-    if firstFrame is None:
-        firstFrame = gray
-        continue
-
-    # Show the frame
-    cv2.imshow("Security Feed", frame)
-    key = cv2.waitKey(1) & 0xFF
-
-    if key == ord('q'):
-        break
-
-# Final message
-if gun_exist:
-    print("Gun Is Detected")
-else:
-    print("Gun is Not Detected")
-
-camera.release()
-cv2.destroyAllWindows()
